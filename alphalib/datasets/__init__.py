@@ -1,6 +1,6 @@
-from .loaders import load_market_sectors, load_hedgefund_strategies
+from .loaders import load_hedgefund_rets, load_industry_rets
 
 __all__ = [
-    "load_market_sectors",
-    "load_hedgefund_strategies",
+    "load_hedgefund_rets",
+    "load_industry_rets",
 ]

@@ -2,12 +2,12 @@ import pandas as pd
 from os.path import dirname, join
 
 
-def load_hedgefund_strategies() -> pd.DataFrame:
+def load_hedgefund_rets() -> pd.DataFrame:
     """
     Load and return monthly returns of 13 different hedge fund strategies.
 
     Returns:
-        pandas DataFrame
+        returns: pandas DataFrame
     """
     module_path = dirname(__file__)
     csv_filename = join(module_path, 'data', 'edhec-hedgefundindices.csv')
@@ -19,7 +19,7 @@ def load_hedgefund_strategies() -> pd.DataFrame:
     return data
 
 
-def load_market_sectors(dataset='value_weighted', num_sectors=30) -> pd.DataFrame:
+def load_industry_rets(dataset='value_weighted', num_sectors=30) -> pd.DataFrame:
     """
     Load and return monthly returns of 30 or 49 different sectors. Value weighted or equally weighted returns
     are returned.
@@ -31,7 +31,7 @@ def load_market_sectors(dataset='value_weighted', num_sectors=30) -> pd.DataFram
             Option to load and return either 30 or 49 different sectors.
 
     Returns:
-        pandas DataFrame
+        returns: pandas DataFrame
     """
 
     fname = ""
