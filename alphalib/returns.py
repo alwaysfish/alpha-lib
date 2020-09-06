@@ -131,7 +131,6 @@ class Returns:
 
         Arguments:
             risk_free_rate: float
-                Risk freet rate
 
         Returns:
             sharpe: pandas Series of DataFrame
