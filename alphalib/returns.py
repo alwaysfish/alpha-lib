@@ -117,11 +117,23 @@ class Returns:
         """
         Returns annualized returns.
         """
-        rets = (self.rets + 1).prod() ** (self.periods / self.num_periods) - 1
-        return rets
+        return (self.rets + 1).prod() ** (self.periods / self.num_periods) - 1
 
-    def annualize_vol(self):
-        raise NotImplemented()
+    def annualized_vol(self):
+        """
+        Returns annualzied volatility.
+        """
+        return self.std() * np.sqrt(self.periods)
 
-    def sharpe(self):
-        raise NotImplemented()
+    def sharpe(self, risk_free_rate):
+        """
+        Return Sharpe ratios.
+
+        Arguments:
+            risk_free_rate: float
+                Risk freet rate
+
+        Returns:
+            sharpe: pandas Series of DataFrame
+        """
+        return (self.annualized_rets() - risk_free_rate) / self.annualized_vol()
