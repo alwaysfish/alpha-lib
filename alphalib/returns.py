@@ -40,6 +40,12 @@ class Returns:
         """
         return self.rets.std(ddof=ddof)
 
+    def semideviation(self):
+        """
+        Returns semideviation.
+        """
+        return self.rets[self.rets < self.rets.mean()].std()
+
     def skewness(self):
         """
         Returns skewness of returns.
@@ -59,7 +65,10 @@ class Returns:
         return self.rets.corr()
 
     def covariance(self):
-        raise NotImplemented()
+        """
+        Returns covariance-variance matrix.
+        """
+        return self.rets.cov()
 
     def var(self, var_type='historical', conf_level=0.95):
         """
