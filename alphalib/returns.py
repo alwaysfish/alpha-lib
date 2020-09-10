@@ -147,3 +147,9 @@ class Returns:
             sharpe: pandas Series of DataFrame
         """
         return (self.annualized_rets() - risk_free_rate) / self.annualized_vol()
+
+    def cagr(self):
+        """
+        Returns Cumulative Annual Growth Rate (CAGR)
+        """
+        raise NotImplemented()
