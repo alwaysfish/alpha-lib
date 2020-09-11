@@ -153,3 +153,6 @@ class Returns:
         Returns Cumulative Annual Growth Rate (CAGR)
         """
         raise NotImplemented()
+
+    def test(self):
+        pass
