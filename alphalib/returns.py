@@ -82,6 +82,14 @@ class Returns:
         Returns:
             VaR: float
                 Value-at-Risk
+
+        Notes:
+           Cornish Fisher expansion is a way to transform a standard Guassian random variable z into a non-Gaussian
+           random variable.
+
+           References:
+               https://faculty.washington.edu/ezivot/econ589/ssrn-id1997178.pdf
+               https://en.wikipedia.org/wiki/Cornish-Fisher_expansion
         """
         if var_type == 'historical':
             return -self.rets.quantile(1 - conf_level)
@@ -92,7 +100,6 @@ class Returns:
             return -(avg + sigma * scipy.stats.norm.ppf(1 - conf_level))
 
         elif var_type == 'cornish-fisher':
-            # https://en.wikipedia.org/wiki/Cornish-Fisher_expansion
             skew = self.skewness()
             kurt = self.kurtosis()
             z = scipy.stats.norm.ppf(1 - conf_level)
