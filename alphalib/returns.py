@@ -76,7 +76,6 @@ class Returns:
 
         Arguments:
             var_type: {'historical', 'gaussian', 'cornish-fisher'}, default='historical'
-
             conf_level: int, default=95%
 
         Returns:
