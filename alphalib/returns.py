@@ -23,6 +23,16 @@ class Returns:
     def __getitem__(self, item):
         return Returns(self.rets[item], self.periods)
 
+    def __add__(self, other):
+        return Returns(self.rets + other, self.periods)
+
+    def __sub__(self, other):
+        return Returns(self.rets - other, self.periods)
+
+    @property
+    def shape(self):
+        return self.rets.shape
+
     def mean(self):
         """
         Returns mean returns.
@@ -144,15 +154,17 @@ class Returns:
 
     def sharpe(self, risk_free_rate):
         """
-        Returns Sharpe ratios.
+        Returns Sharpe ratio(s).
 
         Arguments:
             risk_free_rate: float
 
         Returns:
-            sharpe: pandas Series of DataFrame
+            sharpe: pandas Series
         """
-        return (self.annualized_rets() - risk_free_rate) / self.annualized_vol()
+        rf_per_period = (1 + risk_free_rate) ** (1 / self.periods) - 1
+        excess_returns = self - rf_per_period
+        return excess_returns.annualized_rets() / self.annualized_vol()
 
     def cagr(self):
         """
