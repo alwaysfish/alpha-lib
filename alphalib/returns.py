@@ -5,29 +5,25 @@ import numpy as np
 
 class Returns:
     """
-
     """
-    def __init__(self, rets, periods):
-
-        if rets is None:
-            raise ValueError("'rets' cannot be None")
+    def __init__(self, rets, freq):
 
         if isinstance(rets, pd.DataFrame) or isinstance(rets, pd.Series):
             self.rets = rets
         else:
             self.rets = pd.DataFrame(rets)
 
-        self.periods = periods
-        self.num_periods = self.rets.shape[0]
+        self.freq = freq
+        self.num_returns = self.rets.shape[0]
 
     def __getitem__(self, item):
-        return Returns(self.rets[item], self.periods)
+        return Returns(self.rets[item], self.freq)
 
     def __add__(self, other):
-        return Returns(self.rets + other, self.periods)
+        return Returns(self.rets + other, self.freq)
 
     def __sub__(self, other):
-        return Returns(self.rets - other, self.periods)
+        return Returns(self.rets - other, self.freq)
 
     @property
     def shape(self):
@@ -144,13 +140,13 @@ class Returns:
         """
         Returns annualized returns.
         """
-        return (self.rets + 1).prod() ** (self.periods / self.num_periods) - 1
+        return (self.rets + 1).prod() ** (self.freq / self.num_returns) - 1
 
     def annualized_vol(self):
         """
         Returns annualized volatility.
         """
-        return self.std() * np.sqrt(self.periods)
+        return self.std() * np.sqrt(self.freq)
 
     def sharpe(self, risk_free_rate):
         """
@@ -162,12 +158,33 @@ class Returns:
         Returns:
             sharpe: pandas Series
         """
-        rf_per_period = (1 + risk_free_rate) ** (1 / self.periods) - 1
+        rf_per_period = (1 + risk_free_rate) ** (1 / self.freq) - 1
         excess_returns = self - rf_per_period
         return excess_returns.annualized_rets() / self.annualized_vol()
 
     def cagr(self):
         """
-        Returns Cumulative Annual Growth Rate (CAGR)
+        Returns Compound Annual Growth Rate (CAGR)
         """
         raise NotImplemented()
+
+    def mean_historical(self, compounding=True, annualised=True):
+        """
+        Calculates mean historical return.
+
+        Arguments:
+             compounding: bool, default=True
+                If True, compounded return is returned, otherwise an arithmetical mean is returned.
+
+            annualised: bool, default=True
+                If Ture, annualised mean historical return is returned.
+        """
+
+        freq = 1
+        if annualised:
+            freq = self.freq
+
+        if compounding:
+            return (self.rets + 1).prod() ** (freq / self.num_returns)
+        else:
+            return self.rets.mean() * freq
