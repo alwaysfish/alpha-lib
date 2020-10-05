@@ -14,7 +14,7 @@ class Returns:
             self.rets = pd.DataFrame(rets)
 
         self.freq = freq
-        self.num_returns = self.rets.shape[0]
+        self.length = self.rets.shape[0]
 
     def __getitem__(self, item):
         return Returns(self.rets[item], self.freq)
@@ -28,6 +28,12 @@ class Returns:
     @property
     def shape(self):
         return self.rets.shape
+
+    def min(self):
+        return self.rets.min()
+
+    def max(self):
+        return self.rets.max()
 
     def mean(self):
         """
@@ -136,12 +142,6 @@ class Returns:
         """
         raise NotImplemented()
 
-    def annualized_rets(self):
-        """
-        Returns annualized returns.
-        """
-        return (self.rets + 1).prod() ** (self.freq / self.num_returns) - 1
-
     def annualized_vol(self):
         """
         Returns annualized volatility.
@@ -162,12 +162,6 @@ class Returns:
         excess_returns = self - rf_per_period
         return excess_returns.annualized_rets() / self.annualized_vol()
 
-    def cagr(self):
-        """
-        Returns Compound Annual Growth Rate (CAGR)
-        """
-        raise NotImplemented()
-
     def mean_historical(self, compounding=True, annualised=True):
         """
         Calculates mean historical return.
@@ -185,6 +179,6 @@ class Returns:
             freq = self.freq
 
         if compounding:
-            return (self.rets + 1).prod() ** (freq / self.num_returns)
+            return (self.rets + 1).prod() ** (freq / self.length) - 1
         else:
             return self.rets.mean() * freq
