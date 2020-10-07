@@ -35,3 +35,11 @@ class Portfolio:
             return np.sqrt(weights @ cov_mat @ weights.T)
         else:
             return np.sqrt(np.multiply(weights @ cov_mat, weights).sum(axis=1))
+
+    @staticmethod
+    def get_sharpe(weights, returns, cov_mat, rf):
+        r = Portfolio.get_returns(weights, returns)
+        sigma = Portfolio.get_volatility(weights, cov_mat)
+
+        return (r - rf) / sigma
+    
