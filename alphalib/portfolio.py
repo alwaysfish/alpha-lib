@@ -7,7 +7,7 @@ class Portfolio:
         pass
 
     @staticmethod
-    def get_returns(weights, returns):
+    def get_return(weights, returns):
         """
         Calculates weighted return for each portfolio. If both 'weights' and 'returns' are 2d array,
         it is considered that each row represents a different portfolio.
@@ -38,7 +38,7 @@ class Portfolio:
 
     @staticmethod
     def get_sharpe(weights, returns, cov_mat, rf):
-        r = Portfolio.get_returns(weights, returns)
+        r = Portfolio.get_return(weights, returns)
         sigma = Portfolio.get_volatility(weights, cov_mat)
 
         return (r - rf) / sigma
