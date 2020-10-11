@@ -72,6 +72,11 @@ class EfficientFrontier:
         """
         Plots Efficient Frontier curve.
         """
+
+        # find the lowest volatility
+        # find the highest volatility
+        # plot a curve between lowest and highest volatility, with highest return for each volatility point
+        
         raise NotImplemented()
 
     def get_random_portfolios(self, n=100, return_weights=False):
