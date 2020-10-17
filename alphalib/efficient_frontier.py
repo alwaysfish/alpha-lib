@@ -120,6 +120,9 @@ class EfficientFrontier:
         return pd.DataFrame(w / np.sum(w, axis=1, keepdims=True), columns=self.asset_names)
 
     def _init_optimization(self):
+        """
+        Run some common optimization initialization steps
+        """
 
         # set initial weights
         w_init = np.repeat(1 / self.n_assets, self.n_assets)
@@ -183,9 +186,7 @@ class EfficientFrontier:
             }
             args = (self.er,)
 
-            def neg_portf_return(w, er):
-                return -Portfolio.get_return(w, er)
-
+            def neg_portf_return(w, er): return -Portfolio.get_return(w, er)
             func = neg_portf_return
 
         elif optimization == 'min_vol':
