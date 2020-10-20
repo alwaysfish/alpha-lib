@@ -73,11 +73,18 @@ class EfficientFrontier:
         Plots Efficient Frontier curve.
         """
 
-        # find the lowest volatility
-        # find the highest volatility
-        # plot a curve between lowest and highest volatility, with highest return for each volatility point
+        # rand_portfolios = self.get_random_portfolios(n=10000)
+        # ax = rand_portfolios.plot.scatter('vol', 'rets')
         
-        raise NotImplemented()
+        df = pd.DataFrame(columns=['rets', 'vol'])
+        df['rets'] = np.linspace(np.min(self.er), np.max(self.er), 100)
+
+        df['vol'] = df.apply(lambda x: Portfolio.get_volatility(
+            self.min_volatility(target_ret=x['rets']), self.cov_mat), axis=1)
+
+        ax = df.plot.scatter('vol', 'rets', ax=ax)
+
+        return ax
 
     def get_random_portfolios(self, n=100, return_weights=False):
         """
@@ -100,7 +107,7 @@ class EfficientFrontier:
         p_r = Portfolio.get_return(weights, self.er)
         p_sigma = Portfolio.get_volatility(weights, self.cov_mat)
 
-        p_df = pd.DataFrame({'return': p_r, 'volatility': p_sigma})
+        p_df = pd.DataFrame({'rets': p_r, 'vol': p_sigma})
 
         if return_weights:
             return weights.merge(p_df, left_index=True, right_index=True)
