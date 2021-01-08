@@ -1,3 +1,6 @@
+# The script updates historical prices given a list of tickers. All tickers must be provided
+# in file tickers.csv
+
 import datetime
 from datetime import date
 import pandas as pd
