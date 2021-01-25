@@ -34,7 +34,6 @@ def download_hist_prices(tickers):
 
         else:
             date_from = (prices.index.max() + datetime.timedelta(days=1)).date()
-            print(f'{t}: file found with prices up to {prices.index.max().date()}')
 
         if (date_from <= date_to):
             try:
@@ -43,6 +42,11 @@ def download_hist_prices(tickers):
 
             except RemoteDataError:
                 print(f"{t}: remote error")
+
+            except KeyError:
+                # There is a bug in pandas-datareader that doesn't check if the returned dataframe is empty
+                # This is a workaround
+                print(f'{t}: no new prices found')
 
             else:
                 new_prices = new_prices.astype({'Volume': 'int32'})
@@ -55,6 +59,8 @@ def download_hist_prices(tickers):
                 prices.to_csv(f'{DATA_DIR}/{t}.csv', float_format='%.6g')
 
                 print(f'{t}: new prices added for period [{date_from}, {date_to}]')
+        else:
+            print(f'{t}: no new prices found')
 
 
 def main():
