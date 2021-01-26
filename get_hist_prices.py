@@ -1,14 +1,16 @@
 # The script updates historical prices given a list of tickers. All tickers must be provided
 # in file tickers.csv
 
+import os
 import datetime
 from datetime import date
 import pandas as pd
 from pandas_datareader.yahoo.daily import YahooDailyReader
 from pandas_datareader._utils import RemoteDataError
+from pathlib import Path
 
 
-DATA_DIR = './data'
+DATA_FILE = 'hist-prices.h5'
 
 
 def get_end_date():
@@ -19,48 +21,54 @@ def get_end_date():
     return date_to.date()
 
 
+def get_correct_ticker_name(ticker: str):
+    return ticker.replace('.', '_')
+
+
 def download_hist_prices(tickers):
 
     date_to = get_end_date()
 
-    for t in tickers:
+    path = Path(os.getcwd(), DATA_FILE)
 
-        try:
-            prices = pd.read_csv(f'{DATA_DIR}/{t}.csv', parse_dates=True, index_col=0)
+    with pd.HDFStore(path) as hdf:
 
-        except FileNotFoundError:
-            date_from = date(2010, 1, 1)
-            prices = None
+        for t in tickers:
 
-        else:
-            date_from = (prices.index.max() + datetime.timedelta(days=1)).date()
-
-        if (date_from <= date_to):
             try:
-                reader = YahooDailyReader(t, date_from, date_to)
-                new_prices = reader.read()
-
-            except RemoteDataError:
-                print(f"{t}: remote error")
+                prices = hdf.get(get_correct_ticker_name(t))
 
             except KeyError:
-                # There is a bug in pandas-datareader that doesn't check if the returned dataframe is empty
-                # This is a workaround
-                print(f'{t}: no new prices found')
+                date_from = date(2010, 1, 1)
+                prices = None
 
             else:
-                new_prices = new_prices.astype({'Volume': 'int32'})
+                date_from = (prices.index.max() + datetime.timedelta(days=1)).date()
 
-                if prices is not None:
-                    prices = prices.append(new_prices)
+            if (date_from <= date_to):
+                try:
+                    reader = YahooDailyReader(t, date_from, date_to)
+                    new_prices = reader.read()
+
+                except RemoteDataError:
+                    print(f"{t}: remote error")
+
+                except KeyError:
+                    # There is a bug in pandas-datareader that doesn't check if the returned dataframe is empty
+                    # This is a workaround
+                    print(f'{t}: no new prices found')
+
                 else:
-                    prices = new_prices
+                    new_prices = new_prices.astype({'Volume': 'int32'})
 
-                prices.to_csv(f'{DATA_DIR}/{t}.csv', float_format='%.6g')
+                    if prices is not None:
+                        hdf.append(get_correct_ticker_name(t), new_prices)
+                    else:
+                        hdf.put(get_correct_ticker_name(t), new_prices)
 
-                print(f'{t}: new prices added for period [{date_from}, {date_to}]')
-        else:
-            print(f'{t}: no new prices found')
+                    print(f'{t}: new prices added for period [{date_from}, {date_to}]')
+            else:
+                print(f'{t}: no new prices found')
 
 
 def main():
