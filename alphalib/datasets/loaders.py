@@ -1,8 +1,9 @@
 import pandas as pd
 from os.path import dirname, join
+from ..returns import Returns
 
 
-def load_hedgefund_rets() -> pd.DataFrame:
+def load_hedgefund_rets() -> Returns:
     """
     Load and return monthly returns of 13 different hedge fund strategies.
 
@@ -16,10 +17,10 @@ def load_hedgefund_rets() -> pd.DataFrame:
     data.index = data.index.to_period('M')
     data /= 100
 
-    return data
+    return Returns(data, 12)
 
 
-def load_industry_rets(dataset='value_weighted', num_sectors=30) -> pd.DataFrame:
+def load_industry_rets(dataset='value_weighted', num_sectors=30) -> Returns:
     """
     Load and return monthly returns of 30 or 49 different sectors. Value weighted or equally weighted returns
     are returned.
@@ -61,4 +62,4 @@ def load_industry_rets(dataset='value_weighted', num_sectors=30) -> pd.DataFrame
     data.index = pd.to_datetime(data.index, format='%Y%m').to_period('M')
     data /= 100
 
-    return data
+    return Returns(data, 12)

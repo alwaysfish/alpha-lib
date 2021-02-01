@@ -1,3 +1,7 @@
 pandas
 numpy
 scipy
+statsmodels
+pandas-datareader
+xlrd
+psycopg2
